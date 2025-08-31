@@ -6,6 +6,11 @@
   <title>Controle de Gastos</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link rel="stylesheet" href="style.css">
+  <!-- manisfest.json -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#4CAF50">
+
+
 </head>
 <body>
   <h1>Controle de Gastos</h1>
@@ -47,5 +52,14 @@
   </div>
 
   <script src="script.js"></script>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/service-worker.js')
+      .then(() => console.log('Service Worker registrado!'))
+      .catch(err => console.error('Falha ao registrar SW:', err));
+    }
+  </script>
+
 </body>
 </html>

@@ -114,3 +114,13 @@ let lancamentos = JSON.parse(localStorage.getItem("lancamentos")) || [];
     atualizarTabela();
   }
 }
+
+// script manisfest.json
+
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("/service-worker.js")
+      .then((reg) => console.log("Service Worker registrado:", reg))
+      .catch((err) => console.log("Erro ao registrar SW:", err));
+  });
+}
