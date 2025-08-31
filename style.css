@@ -1,0 +1,107 @@
+ body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      margin: 0;
+      min-height: 100vh;
+      background: linear-gradient(180deg, #7a7635 0%, #ACB6E5 100%);
+    }
+
+    h1 {
+      text-align: center;
+      color: #fff;
+      text-shadow: 1px 1px 4px rgba(0,0,0,0.4);
+    }
+
+    .formulario {
+      max-width: 600px;
+      margin: 0 auto;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      background: #fff;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    input, select, button {
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+
+    select {
+      flex: 1;
+    }
+    input[type="text"] {
+      flex: 2;
+    }
+    input[type="number"] {
+      flex: 1;
+    }
+    button {
+      flex: 1;
+      background: #007bff;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+
+    table {
+      width: 100%;
+      max-width: 800px;
+      margin: 20px auto;
+      border-collapse: collapse;
+      background: #fff;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    th, td {
+      padding: 12px;
+      border-bottom: 1px solid #ddd;
+      text-align: left;
+    }
+    th {
+      background: #95a0ac;
+      color: #fff;
+    }
+    .receitas td {
+      background-color: rgb(70, 165, 70);
+      color: #fff;
+    }
+    .despesas td {
+      background-color: rgb(194, 69, 69);
+      color: #fff;
+    }
+
+    .resumo {
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 15px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.2);
+    }
+    .positivo {
+      color: green;
+      font-weight: bold;
+    }
+    .negativo {
+      color: red;
+      font-weight: bold;
+    }
+
+    .grafico {
+      max-width: 500px;
+      margin: 30px auto;
+      background: #fff;
+      padding: 15px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    }

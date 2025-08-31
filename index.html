@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Controle de Gastos</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Controle de Gastos</h1>
+
+  <!-- Formulário -->
+ <!-- Formulário -->
+ <div class="formulario">
+    <select id="tipo">
+        <option value="receita">Receita</option>
+    <option value="despesa">Despesa</option>
+    </select>
+    <input type="text" id="descricao" placeholder="Descrição">
+    <input type="number" id="valor" placeholder="Valor (R$)">
+    <button onclick="adicionar()">Adicionar</button>
+    <button onclick="removerTudo()" style="background: #dc3545;">Remover Tudo</button>
+ </div>
+
+
+  <!-- Tabela de lançamentos -->
+  <table id="tabela">
+    <tr>
+      <th>Tipo</th>
+      <th>Descrição</th>
+      <th>Valor (R$)</th>
+      <th>Ação</th>
+    </tr>
+  </table>
+
+  <!-- Resumo -->
+  <div class="resumo">
+    <p><strong>Total Receitas:</strong> R$ <span id="totalReceita">0,00</span></p>
+    <p><strong>Total Despesas:</strong> R$ <span id="totalDespesa">0,00</span></p>
+    <p><strong>Saldo:</strong> <span id="saldo">0,00</span></p>
+  </div>
+
+  <!-- Gráfico -->
+  <div class="grafico">
+    <canvas id="graficoGastos"></canvas>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
