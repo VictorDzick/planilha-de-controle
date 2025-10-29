@@ -215,3 +215,27 @@ if ('serviceWorker' in navigator) {
     })
     .catch(err => console.log('Falha ao registrar o Service Worker:', err));
 }
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/service-worker.js')
+    .then(registration => {
+      console.log('Service Worker registrado com sucesso!');
+
+      registration.onupdatefound = () => {
+        const newWorker = registration.installing;
+        newWorker.onstatechange = () => {
+          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+            // Quando detecta nova versão
+            const updateModal = new bootstrap.Modal(document.getElementById('updateModal'));
+            updateModal.show();
+
+            document.getElementById('btnAtualizar').addEventListener('click', () => {
+              newWorker.postMessage({ action: 'skipWaiting' });
+              window.location.reload();
+            });
+          }
+        };
+      };
+    })
+    .catch(err => console.error('Falha ao registrar o Service Worker:', err));
+}
