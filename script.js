@@ -162,3 +162,56 @@ if ("serviceWorker" in navigator) {
       .catch(err => console.log("Erro ao registrar SW:", err));
   });
 }
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/service-worker.js')
+    .then(registration => {
+      console.log('Service Worker registrado com sucesso!');
+
+      // Quando um novo SW é encontrado
+      registration.onupdatefound = () => {
+        const newWorker = registration.installing;
+        newWorker.onstatechange = () => {
+          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+            // Nova versão detectada
+            const updateBar = document.createElement('div');
+            updateBar.innerHTML = `
+              <div style="
+                position: fixed;
+                bottom: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: #198754;
+                color: white;
+                padding: 12px 20px;
+                border-radius: 8px;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+                z-index: 9999;
+                font-family: Arial, sans-serif;
+              ">
+                🚀 Nova versão disponível!
+                <button id="update-btn" style="
+                  background: white;
+                  color: #198754;
+                  border: none;
+                  padding: 6px 12px;
+                  margin-left: 10px;
+                  border-radius: 5px;
+                  cursor: pointer;
+                ">
+                  Atualizar
+                </button>
+              </div>
+            `;
+            document.body.appendChild(updateBar);
+
+            document.getElementById('update-btn').addEventListener('click', () => {
+              newWorker.postMessage({ action: 'skipWaiting' });
+              window.location.reload();
+            });
+          }
+        };
+      };
+    })
+    .catch(err => console.log('Falha ao registrar o Service Worker:', err));
+}
