@@ -236,47 +236,26 @@ form.addEventListener("submit", (e) => {
 
 
 // -------- Service Worker --------
+// -------- Service Worker (PWA) --------
 if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("/service-worker.js")
-    .then(registration => {
-      console.log("Service Worker registrado com sucesso!");
+  navigator.serviceWorker
+    .register("/service-worker.js")
+    .then((registration) => {
+      console.log("✅ Service Worker registrado com sucesso!");
 
+      // Quando detectar nova versão do SW
       registration.onupdatefound = () => {
         const newWorker = registration.installing;
         newWorker.onstatechange = () => {
           if (newWorker.state === "installed" && navigator.serviceWorker.controller) {
-            const updateBar = document.createElement("div");
-            updateBar.innerHTML = `
-              <div style="
-                position: fixed;
-                bottom: 20px;
-                left: 50%;
-                transform: translateX(-50%);
-                background: #198754;
-                color: white;
-                padding: 12px 20px;
-                border-radius: 8px;
-                box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-                z-index: 9999;
-                font-family: Arial, sans-serif;
-              ">
-                🚀 Nova versão disponível!
-                <button id="update-btn" style="
-                  background: white;
-                  color: #198754;
-                  border: none;
-                  padding: 6px 12px;
-                  margin-left: 10px;
-                  border-radius: 5px;
-                  cursor: pointer;
-                ">
-                  Atualizar
-                </button>
-              </div>
-            `;
-            document.body.appendChild(updateBar);
+            console.log("🚀 Nova versão detectada!");
+            
+            // Exibir modal Bootstrap de atualização
+            const updateModal = new bootstrap.Modal(document.getElementById("updateModal"));
+            updateModal.show();
 
-            document.getElementById("update-btn").addEventListener("click", () => {
+            // Ação ao clicar em "Atualizar agora"
+            document.getElementById("btnAtualizar").addEventListener("click", () => {
               newWorker.postMessage({ action: "skipWaiting" });
               window.location.reload();
             });
@@ -284,5 +263,13 @@ if ("serviceWorker" in navigator) {
         };
       };
     })
-    .catch(err => console.error("Falha ao registrar o Service Worker:", err));
+    .catch((err) => console.error("❌ Erro ao registrar o Service Worker:", err));
+
+  // Atualizar automaticamente quando o SW for ativado
+  let refreshing;
+  navigator.serviceWorker.addEventListener("controllerchange", () => {
+    if (refreshing) return;
+    window.location.reload();
+    refreshing = true;
+  });
 }
