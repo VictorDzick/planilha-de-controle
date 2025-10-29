@@ -1,4 +1,4 @@
-// Controle de lançamentos
+// -------- Controle de lançamentos --------
 let lancamentos = JSON.parse(localStorage.getItem("lancamentos")) || [];
 let grafico;
 
@@ -105,24 +105,104 @@ function removerTudo() {
 // Inicializa tabela e gráfico
 atualizarTabela();
 
-// -------- PWA e instalação --------
+
+// --------- Detectar iOS ---------
+function isIOS() {
+  return /iphone|ipad|ipod/i.test(window.navigator.userAgent);
+}
+
+function isInStandaloneMode() {
+  return ('standalone' in window.navigator) && window.navigator.standalone;
+}
+
+
+// -------- Instalação PWA --------
 let deferredPrompt;
+const btnInstalar = document.getElementById('btnInstalar');
 
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   deferredPrompt = e;
 });
 
-const btnInstalar = document.getElementById('btnInstalar');
-btnInstalar.addEventListener('click', async () => {
-  if (deferredPrompt) {
-    deferredPrompt.prompt();
-    const choice = await deferredPrompt.userChoice;
-    if (choice.outcome === 'accepted') console.log("PWA instalado pelo usuário");
-    deferredPrompt = null;
-  }
-  mostrarAvaliacao();
-});
+// Função: mostrar instruções para iOS
+function mostrarInstrucoesIOS() {
+  const overlay = document.createElement('div');
+  overlay.innerHTML = `
+    <div style="
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 99999;
+    ">
+      <div style="
+        background: white;
+        border-radius: 15px;
+        padding: 20px;
+        max-width: 320px;
+        text-align: center;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        font-family: Arial, sans-serif;
+      ">
+        <h5 style="color:#198754;">📱 Instalar no iPhone</h5>
+        <p>Toque em <strong>Compartilhar</strong> 
+        <span style="font-size:22px;">⬆️</span> 
+        e depois selecione<br>
+        <strong>“Adicionar à Tela de Início”</strong>.</p>
+        <button id="fechar-ios" style="
+          background:#198754;
+          color:white;
+          border:none;
+          border-radius:8px;
+          padding:8px 16px;
+          margin-top:10px;
+          cursor:pointer;
+        ">Fechar</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  document.getElementById('fechar-ios').addEventListener('click', () => overlay.remove());
+}
+
+// Mostrar botão flutuante no iPhone
+if (isIOS() && !isInStandaloneMode()) {
+  const btnFlutuante = document.createElement('button');
+  btnFlutuante.innerHTML = '<i class="fa-solid fa-plus"></i>';
+  btnFlutuante.style.cssText = `
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    background: #198754;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    font-size: 24px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    cursor: pointer;
+    z-index: 9999;
+  `;
+  document.body.appendChild(btnFlutuante);
+
+  btnFlutuante.addEventListener('click', mostrarInstrucoesIOS);
+} else {
+  // Android/PC
+  btnInstalar.addEventListener('click', async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const choice = await deferredPrompt.userChoice;
+      if (choice.outcome === 'accepted') console.log("PWA instalado pelo usuário");
+      deferredPrompt = null;
+    }
+    mostrarAvaliacao();
+  });
+}
+
 
 // -------- Modal Avaliação Bootstrap --------
 const modalAvaliacao = new bootstrap.Modal(document.getElementById("modalAvaliacao"));
@@ -154,27 +234,18 @@ form.addEventListener("submit", (e) => {
   });
 });
 
-// -------- Service Worker (PWA) --------
+
+// -------- Service Worker --------
 if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("service-worker.js")
-      .then(reg => console.log("Service Worker registrado:", reg))
-      .catch(err => console.log("Erro ao registrar SW:", err));
-  });
-}
-
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/service-worker.js')
+  navigator.serviceWorker.register("/service-worker.js")
     .then(registration => {
-      console.log('Service Worker registrado com sucesso!');
+      console.log("Service Worker registrado com sucesso!");
 
-      // Quando um novo SW é encontrado
       registration.onupdatefound = () => {
         const newWorker = registration.installing;
         newWorker.onstatechange = () => {
-          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-            // Nova versão detectada
-            const updateBar = document.createElement('div');
+          if (newWorker.state === "installed" && navigator.serviceWorker.controller) {
+            const updateBar = document.createElement("div");
             updateBar.innerHTML = `
               <div style="
                 position: fixed;
@@ -205,37 +276,13 @@ if ('serviceWorker' in navigator) {
             `;
             document.body.appendChild(updateBar);
 
-            document.getElementById('update-btn').addEventListener('click', () => {
-              newWorker.postMessage({ action: 'skipWaiting' });
+            document.getElementById("update-btn").addEventListener("click", () => {
+              newWorker.postMessage({ action: "skipWaiting" });
               window.location.reload();
             });
           }
         };
       };
     })
-    .catch(err => console.log('Falha ao registrar o Service Worker:', err));
-}
-
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/service-worker.js')
-    .then(registration => {
-      console.log('Service Worker registrado com sucesso!');
-
-      registration.onupdatefound = () => {
-        const newWorker = registration.installing;
-        newWorker.onstatechange = () => {
-          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-            // Quando detecta nova versão
-            const updateModal = new bootstrap.Modal(document.getElementById('updateModal'));
-            updateModal.show();
-
-            document.getElementById('btnAtualizar').addEventListener('click', () => {
-              newWorker.postMessage({ action: 'skipWaiting' });
-              window.location.reload();
-            });
-          }
-        };
-      };
-    })
-    .catch(err => console.error('Falha ao registrar o Service Worker:', err));
+    .catch(err => console.error("Falha ao registrar o Service Worker:", err));
 }
