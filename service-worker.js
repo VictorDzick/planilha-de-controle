@@ -1,41 +1,24 @@
-const CACHE_NAME = 'app-cache-v2'; // MUDE o número
-const urlsToCache = [
-  '/',
-  '/index.html',
-  '/style.css',
-  '/script.js',
-  '/icons/icon-192x192.png',
-  '/icons/icon-512x512.png'
-];
+const CACHE_NAME = 'app-cache-v4'; // MUDE SEMPRE O NÚMERO
 
-// Instala e faz cache dos arquivos
 self.addEventListener('install', event => {
-  self.skipWaiting();
+  self.skipWaiting(); // força instalar o novo
 });
 
-
-// Ativa e remove caches antigos
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(keys =>
-      Promise.all(keys.map(k => caches.delete(k)))
+      Promise.all(
+        keys.map(key => caches.delete(key)) // apaga TODOS os caches antigos
+      )
     )
   );
-  self.clients.claim();
+  self.clients.claim(); // assume controle imediato
 });
 
-
-// Intercepta requisições e usa cache
 self.addEventListener('fetch', event => {
   event.respondWith(
-    caches.match(event.request)
-      .then(response => response || fetch(event.request))
+    fetch(event.request)
+      .then(response => response)
+      .catch(() => caches.match(event.request))
   );
-});
-
-// Permite receber mensagens do script.js
-self.addEventListener('message', event => {
-  if (event.data.action === 'skipWaiting') {
-    self.skipWaiting();
-  }
 });

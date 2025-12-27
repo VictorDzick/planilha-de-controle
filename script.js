@@ -497,32 +497,13 @@ function configurarPWA() {
 
     // Service Worker
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/sw.js')
-            .then((reg) => {
-                registration = reg;
-                console.log('Service Worker registrado com sucesso');
-                
-                // Verificar atualizações
-                reg.addEventListener('updatefound', () => {
-                    const newWorker = reg.installing;
-                    newWorker.addEventListener('statechange', () => {
-                        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                            updateAvailable = true;
-                            mostrarModalAtualizacao();
-                        }
-                    });
-                });
-            })
-            .catch((err) => {
-                console.log('Falha ao registrar Service Worker:', err);
-            });
+  navigator.serviceWorker.register('/service-worker.js')
+    .then(reg => {
+      console.log('SW registrado');
+      reg.update(); // força checar atualização
+    });
+}
 
-        navigator.serviceWorker.addEventListener('controllerchange', () => {
-            if (updateAvailable) {
-                window.location.reload();
-            }
-        });
-    }
 }
 
 function mostrarModalAtualizacao() {
