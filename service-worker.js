@@ -10,12 +10,9 @@ const urlsToCache = [
 
 // Instala e faz cache dos arquivos
 self.addEventListener('install', event => {
-  self.skipWaiting(); // força a ativação imediata da nova versão
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(urlsToCache))
-  );
+  self.skipWaiting();
 });
+
 
 // Ativa e remove caches antigos
 self.addEventListener('activate', event => {
